@@ -39,18 +39,15 @@ jobs:
         run: |
           cd linux
           INSTALL_MOD_PATH=$PWD/../modules-out make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules_install
-
       - name: Archive for artifacts
         run: |
-          cd linux
-          tar czf ../linux-arm64-artifacts.tar.gz \
-            arch/arm64/boot/Image \
-            .config \
-            vmlinux \
-            System.map
-          cd ../modules-out
-          tar --append -zf ../linux-arm64-artifacts.tar.gz lib/
-
+          mkdir artifact-out
+          cp linux/arch/arm64/boot/Image artifact-out/
+          cp linux/.config artifact-out/
+          cp linux/System.map artifact-out/
+          cp linux/vmlinux artifact-out/
+          cp -r modules-out/lib artifact-out/
+          tar czf linux-arm64-artifacts.tar.gz -C artifact-out/ .
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
