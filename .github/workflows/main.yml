@@ -1,67 +1,67 @@
-name: Build Linux Kernel v6.18.10
+name: Build Linux Kernel v6.18 for aarch64
 
 on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-arm64:
     runs-on: ubuntu-latest
-    name: Build Kernel
 
     steps:
       - name: Checkout workflow repo
         uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install dependencies and cross toolchain
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev libncurses5-dev curl cpio rsync
-      
-      - name: Clone Linux Kernel v6.18.10 stable
+          sudo apt-get install -y build-essential bc bison flex libssl-dev \
+             libelf-dev libncurses5-dev curl cpio rsync gcc-aarch64-linux-gnu
+
+      - name: Clone Linux Kernel v6.18 tag
         run: |
           git clone --depth 1 --branch v6.18.10 https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
 
-      - name: Copy uploaded .config
+      - name: Copy uploaded .config (必须是aarch64配置)
         run: |
           cp .config linux/.config
 
-      - name: Prepare config with olddefconfig
+      - name: olddefconfig (ARCH=arm64)
         run: |
           cd linux
-          make olddefconfig
+          make ARCH=arm64 olddefconfig
 
-      - name: Build kernel and modules
+      - name: Build kernel and modules (ARCH=arm64)
         run: |
           cd linux
-          make -j$(nproc) all modules
+          make -j$(nproc) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- all modules
 
-      - name: Install modules to lib/modules
+      - name: Install modules to lib/modules (ARCH=arm64)
         run: |
           cd linux
-          INSTALL_MOD_PATH=$PWD/../modules-out make modules_install
+          INSTALL_MOD_PATH=$PWD/../modules-out make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules_install
 
-      - name: Archive kernel, modules and .config
+      - name: Archive for artifacts
         run: |
           cd linux
-          tar czf ../linux-artifacts.tar.gz \
-            arch/arm64/boot/bzImage \
+          tar czf ../linux-arm64-artifacts.tar.gz \
+            arch/arm64/boot/Image \
             .config \
             vmlinux \
             System.map
           cd ../modules-out
-          tar --append -zf ../linux-artifacts.tar.gz lib/
+          tar --append -zf ../linux-arm64-artifacts.tar.gz lib/
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: linux-v6.18-full-artifacts
-          path: linux-artifacts.tar.gz
+          name: linux-v6.18-aarch64-artifacts
+          path: linux-arm64-artifacts.tar.gz
 
-      # 可选：自动发布 Release
+      # 可选 自动 Release
       - name: Create Release
         if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
-          name: Linux Kernel v6.18.10 Build ${{ github.run_number }}
-          tag_name: linux-v6.18.10-build-${{ github.run_number }}
-          files: linux-artifacts.tar.gz
+          name: Linux Kernel v6.18 aarch64 Build ${{ github.run_number }}
+          tag_name: linux-v6.18-arm64-build-${{ github.run_number }}
+          files: linux-arm64-artifacts.tar.gz
