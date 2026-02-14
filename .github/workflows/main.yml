@@ -39,6 +39,7 @@ jobs:
       - name: olddefconfig (ARCH=arm64)
         run: |
           cd linux
+          ls -lh
       - name: Build kernel and modules (ARCH=arm64)
         run: |
           cd linux
