@@ -25,8 +25,11 @@ jobs:
         run: |
           cp .config linux/.config
           cp uwe5622.zip linux/
+          df -lh
+      - name: 解压驱动
+        run: |
           cd linux
-          unzip uwe5622.zip
+          unzip -v uwe5622.zip > /dev/null
       - name: 更改驱动
         run: |
           cd linux
