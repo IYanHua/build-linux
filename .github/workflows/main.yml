@@ -27,10 +27,13 @@ jobs:
           cp uwe5622.zip linux/
           cd linux
           unzip uwe5622.zip
+      - name: 更改驱动
+        run: |
+          cd linux
           mv uwe5622/ drivers/net/wireless/
+          rm -rf drivers/net/wireless/Kconfig drivers/net/wireless/Makefile
           cp -f Kconfig drivers/net/wireless/Kconfig
           cp -f Makefile drivers/net/wireless/Makefile
-
       - name: olddefconfig (ARCH=arm64)
         run: |
           cd linux
