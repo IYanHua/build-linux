@@ -20,7 +20,6 @@ jobs:
       - name: Clone Linux Kernel v6.19 tag
         run: |
           git clone --depth 1 --branch v6.19 https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
-
       - name: Copy uploaded .config (必须是aarch64配置)
         run: |
           cp .config linux/.config
@@ -40,8 +39,6 @@ jobs:
       - name: olddefconfig (ARCH=arm64)
         run: |
           cd linux
-          make ARCH=arm64 olddefconfig
-
       - name: Build kernel and modules (ARCH=arm64)
         run: |
           cd linux
