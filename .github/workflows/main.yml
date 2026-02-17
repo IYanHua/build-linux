@@ -19,7 +19,7 @@ jobs:
 
       - name: Clone Linux Kernel v6.19 tag
         run: |
-          git clone --depth 1 --branch v6.19.0 https://github.com/torvalds/linux.git
+          git clone --depth 1 --branch v6.19 https://github.com/torvalds/linux.git
       - name: Copy uploaded .config (必须是aarch64配置)
         run: |
           cp .config linux/.config
