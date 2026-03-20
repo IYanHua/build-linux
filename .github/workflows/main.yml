@@ -35,7 +35,7 @@ jobs:
       - name: Build kernel and modules (ARCH=arm64)
         run: |
           cd linux
-          make -j$(nproc) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- all modules
+          make -j$(nproc) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- all modules V=1
       - name: Install modules to lib/modules (ARCH=arm64)
         run: |
           cd linux
