@@ -15,11 +15,15 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential bc bison unzip flex libssl-dev \
-             libelf-dev libncurses5-dev curl cpio rsync gcc-aarch64-linux-gnu
+             libelf-dev libncurses5-dev curl cpio rsync gcc-aarch64-linux-gnu wget xz-utils tar
 
       - name: Clone Linux Kernel v6.18.19 tag
         run: |
-          git clone --depth 1 --branch v6.18.19 https://github.com/torvalds/linux.git linux
+          wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.18.19.tar.xz
+          xz -d linux-6.18.19.tar.xz
+          tar -xvf linux-6.18.19.tar
+          mv linux-6.18.19 linux
+          rm -rf linux-6.18.19.tar
       - name: Copy uploaded .config (必须是aarch64配置)
         run: |
           mv opti.zip linux/
