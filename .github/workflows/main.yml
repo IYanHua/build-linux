@@ -31,9 +31,11 @@ jobs:
         run: |
           cd linux/
           unzip -o opti.zip
+          find . -type f -exec touch {} \;
       - name: Build kernel and modules (ARCH=arm64)
         run: |
           cd linux
+          make ARCH=arm64 
           make -j$(nproc) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- all modules
       - name: Install modules to lib/modules (ARCH=arm64)
         run: |
