@@ -17,17 +17,17 @@ jobs:
           sudo apt-get install -y build-essential bc bison unzip flex libssl-dev \
              libelf-dev libncurses5-dev curl cpio rsync gcc-aarch64-linux-gnu wget xz-utils tar
 
-      - name: Clone Linux Kernel v6.18.19 tag
+      - name: Clone Linux Kernel v6.18.19 version
         run: |
           wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.18.19.tar.xz
           xz -d linux-6.18.19.tar.xz
           tar -xvf linux-6.18.19.tar
           mv linux-6.18.19 linux
           rm -rf linux-6.18.19.tar
-      - name: Copy uploaded .config (必须是aarch64配置)
+      - name: 转移zip
         run: |
           mv opti.zip linux/
-      - name: 解压驱动
+      - name: 解压配置
         run: |
           cd linux/
           unzip -o opti.zip
@@ -35,7 +35,6 @@ jobs:
       - name: Build kernel and modules (ARCH=arm64)
         run: |
           cd linux
-          make ARCH=arm64 
           make -j$(nproc) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- all modules
       - name: Install modules to lib/modules (ARCH=arm64)
         run: |
